@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Impatto della Tecnologia sugli Studenti</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0d0f14;
@@ -20,225 +22,203 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'DM Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 300;
+    min-height: 100vh;
     overflow-x: hidden;
   }
 
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(91,156,246,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(249,123,107,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .container {
-    max-width: 1000px;
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 40px 20px;
   }
 
   header {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent1);
+    margin-bottom: 12px;
   }
 
   h1 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
     color: #fff;
+    margin-bottom: 16px;
+  }
+
+  h1 span {
+    color: var(--accent2);
   }
 
   .subtitle {
     color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.6;
   }
 
-  /* KPI */
   .kpi-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 20px 0;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
   }
 
   .kpi {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(91,156,246,0.05), transparent 60%);
+    pointer-events: none;
   }
 
   .kpi-value {
-    font-size: 2rem;
-    font-weight: bold;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
     color: #fff;
-    margin: 5px 0;
+    line-height: 1;
+    margin-bottom: 4px;
   }
 
   .kpi-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--muted);
+    line-height: 1.3;
   }
 
-  /* Section */
+  .kpi-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .badge-blue  { background: rgba(91,156,246,0.15); color: var(--accent1); }
+  .badge-green { background: rgba(110,231,183,0.15); color: var(--accent3); }
+  .badge-red   { background: rgba(249,123,107,0.15); color: var(--accent2); }
+  .badge-yellow{ background: rgba(251,191,36,0.15);  color: var(--accent4); }
+  .badge-purple{ background: rgba(192,132,252,0.15); color: var(--accent5); }
+
   .section-title {
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: var(--accent1);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin: 25px 0 15px 0;
-    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-left: 10px;
+    border-left: 3px solid var(--accent1);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
   }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
+    border-radius: 12px;
+    padding: 16px;
   }
 
   .card-title {
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: #fff;
-    margin-bottom: 5px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
   }
 
   .card-sub {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--muted);
-    margin-bottom: 15px;
-  }
-
-  /* Horizontal bars */
-  .bar-item {
     margin-bottom: 12px;
   }
 
-  .bar-label {
-    font-size: 0.8rem;
-    color: var(--text);
-    margin-bottom: 3px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .bar-container {
-    width: 100%;
-    height: 10px;
-    background: var(--surface2);
-    border-radius: 5px;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.3s;
-  }
-
-  /* Simple charts */
-  .donut-chart {
-    width: 100%;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 15px 0;
+  .chart-wrap {
     position: relative;
-  }
-
-  .donut-item {
-    text-align: center;
-    flex: 1;
-  }
-
-  .donut-number {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #fff;
-  }
-
-  .donut-label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    margin-top: 5px;
-  }
-
-  /* Pie chart visual */
-  .pie-visual {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    position: relative;
-    margin: 0 auto 10px;
-  }
-
-  .pie-segment {
-    position: absolute;
     width: 100%;
-    height: 100%;
-    border-radius: 50%;
+    height: 240px;
   }
 
-  /* Scale bars */
-  .scale-item {
-    margin-bottom: 10px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
+  .hbar-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .hbar-row { display: flex; flex-direction: column; gap: 3px; }
+  .hbar-label { font-size: 0.75rem; color: var(--text); }
+  .hbar-track { display: flex; align-items: center; gap: 6px; }
+  .hbar-bg { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 4px; }
+  .hbar-val { font-size: 0.7rem; font-weight: 700; color: var(--muted); min-width: 22px; text-align: right; }
 
-  .scale-num {
-    font-weight: bold;
-    color: var(--muted);
-    font-size: 0.75rem;
-    width: 20px;
-  }
-
-  .scale-bar {
-    flex: 1;
-    height: 8px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .scale-fill {
-    height: 100%;
-    border-radius: 4px;
-  }
-
-  .scale-val {
-    font-size: 0.75rem;
-    color: var(--muted);
-    width: 25px;
-    text-align: right;
-  }
-
-  /* Grid */
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
+  .scale-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .scale-num { font-size: 0.7rem; font-weight: 700; width: 16px; text-align: right; color: var(--muted); }
+  .scale-bar-bg { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .scale-bar-fill { height: 100%; border-radius: 4px; }
+  .scale-count { font-size: 0.7rem; color: var(--muted); min-width: 22px; text-align: right; }
 
   .insight {
-    background: rgba(91,156,246,0.1);
+    background: linear-gradient(135deg, rgba(91,156,246,0.08), rgba(249,123,107,0.05));
     border: 1px solid rgba(91,156,246,0.2);
-    border-radius: 10px;
-    padding: 15px;
-    margin: 20px 0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 24px;
   }
 
   .insight-title {
-    font-weight: bold;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
     color: var(--accent1);
-    font-size: 0.85rem;
-    margin-bottom: 10px;
     text-transform: uppercase;
+    margin-bottom: 10px;
   }
 
   .insight-list {
@@ -246,16 +226,16 @@
   }
 
   .insight-list li {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text);
-    margin-bottom: 8px;
-    padding-left: 15px;
+    padding-left: 16px;
     position: relative;
-    line-height: 1.4;
+    line-height: 1.5;
+    margin-bottom: 6px;
   }
 
-  .insight-list li:before {
-    content: "→";
+  .insight-list li::before {
+    content: '→';
     position: absolute;
     left: 0;
     color: var(--accent2);
@@ -264,284 +244,315 @@
   footer {
     text-align: center;
     color: var(--muted);
-    font-size: 0.75rem;
-    margin-top: 30px;
-    padding-top: 15px;
+    font-size: 0.7rem;
+    margin-top: 32px;
+    padding-top: 16px;
     border-top: 1px solid var(--border);
   }
 
   @media (min-width: 600px) {
     .grid-2 { grid-template-columns: 1fr 1fr; }
-    .kpi-row { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
   }
+
+  canvas { max-height: 240px !important; }
 </style>
 </head>
 <body>
 <div class="container">
 
   <header>
-    <h1>📊 L'impatto della tecnologia<br>sugli studenti</h1>
-    <p class="subtitle">Analisi di 71 risposte su abitudini e utilizzo della tecnologia nello studio.</p>
+    <div class="eyebrow">Indagine scolastica · 2026</div>
+    <h1>L'impatto della tecnologia<br><span>sugli studenti</span></h1>
+    <p class="subtitle">Analisi statistica di 71 risposte raccolte tramite questionario su abitudini, utilizzo e percezioni degli studenti riguardo alla tecnologia nello studio.</p>
   </header>
 
-  <!-- KPI -->
   <div class="kpi-row">
     <div class="kpi">
-      <div class="kpi-label">CAMPIONE</div>
+      <div class="kpi-badge badge-blue">Campione</div>
       <div class="kpi-value">71</div>
-      <div class="kpi-label">risposte</div>
+      <div class="kpi-label">risposte totali raccolte</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">UTILITÀ</div>
-      <div class="kpi-value">3.9/5</div>
-      <div class="kpi-label">aiuta nello studio</div>
+      <div class="kpi-badge badge-green">Utilità media</div>
+      <div class="kpi-value">3.9<span style="font-size:1rem;color:var(--muted)">/5</span></div>
+      <div class="kpi-label">la tecnologia aiuta nello studio</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">DISTRAZIONE</div>
-      <div class="kpi-value">3.4/5</div>
-      <div class="kpi-label">smartphone distrae</div>
+      <div class="kpi-badge badge-red">Distrazione media</div>
+      <div class="kpi-value">3.4<span style="font-size:1rem;color:var(--muted)">/5</span></div>
+      <div class="kpi-label">smartphone e social distraggono</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">AI USAGE</div>
-      <div class="kpi-value">83%</div>
-      <div class="kpi-label">usa ChatGPT</div>
+      <div class="kpi-badge badge-yellow">AI Usage</div>
+      <div class="kpi-value">83<span style="font-size:1rem;color:var(--muted)">%</span></div>
+      <div class="kpi-label">usa ChatGPT o altri AI</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-badge badge-purple">Aiuto difficoltà</div>
+      <div class="kpi-value">55<span style="font-size:1rem;color:var(--muted)">%</span></div>
+      <div class="kpi-label">dice "sì, spesso" per argomenti difficili</div>
     </div>
   </div>
 
-  <!-- Profilo -->
-  <p class="section-title">👥 Profilo campione</p>
-
+  <p class="section-title">Profilo del campione</p>
   <div class="grid-2">
     <div class="card">
       <div class="card-title">Distribuzione per età</div>
-      <div class="card-sub">71 rispondenti</div>
-      <div class="donut-chart">
-        <div style="background: linear-gradient(90deg, #5b9cf6 0%, #5b9cf6 45%, #f97b6b 45%, #f97b6b 75%, #6ee7b7 75%); width: 100%; height: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
-      </div>
-      <div style="font-size: 0.75rem; color: var(--muted); line-height: 1.6;">
-        <div>🔵 17-19 anni: 32 (45%)</div>
-        <div>🔴 14-16 anni: 20 (28%)</div>
-        <div>🟢 Più di 19: 19 (27%)</div>
+      <div class="card-sub">Fascia anagrafica dei rispondenti</div>
+      <div class="chart-wrap">
+        <canvas id="etaChart"></canvas>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Classe frequentata</div>
-      <div class="card-sub">71 rispondenti</div>
-      <div class="donut-chart">
-        <div style="background: linear-gradient(90deg, #5b9cf6 0%, #5b9cf6 48%, #f97b6b 48%, #f97b6b 72%, #6ee7b7 72%); width: 100%; height: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
-      </div>
-      <div style="font-size: 0.75rem; color: var(--muted); line-height: 1.6;">
-        <div>🔵 Quinta: 34 (48%)</div>
-        <div>🔴 Università: 17 (24%)</div>
-        <div>🟢 Prime classi: 20 (28%)</div>
+      <div class="card-sub">Livello scolastico dei partecipanti</div>
+      <div class="chart-wrap">
+        <canvas id="classeChart"></canvas>
       </div>
     </div>
   </div>
 
-  <!-- Utilizzo -->
-  <p class="section-title">💻 Uso della tecnologia</p>
-
-  <div class="card">
-    <div class="card-title">Dispositivi più usati</div>
-    <div class="card-sub">71 studenti (scelta multipla)</div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Smartphone</span> <span>37</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 100%; background: #5b9cf6;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Tablet</span> <span>35</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 95%; background: #5b9cf6;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>PC / Laptop</span> <span>33</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 89%; background: #5b9cf6;"></div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">App per studiare (TOP)</div>
-    <div class="card-sub">Più utilizzate</div>
-    <div class="bar-item">
-      <div class="bar-label"><span>ChatGPT</span> <span>59</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 100%; background: #c084fc;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Google</span> <span>40</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 68%; background: #c084fc;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Registro</span> <span>30</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 51%; background: #c084fc;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Notion/Appunti</span> <span>25</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 42%; background: #c084fc;"></div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">⏱️ Ore al giorno con tecnologia</div>
-    <div class="card-sub">Distribuzione dello studio</div>
-    <div class="bar-item">
-      <div class="bar-label"><span>&lt; 30 min</span> <span>10</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 45%; background: #5b9cf6;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>30 min - 1h</span> <span>24</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 100%; background: #6ee7b7;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>1 - 2 ore</span> <span>15</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 62%; background: #fbbf24;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>&gt; 2 ore</span> <span>22</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 92%; background: #f97b6b;"></div></div>
-    </div>
-  </div>
-
-  <!-- Distrazioni -->
-  <p class="section-title">😴 Comportamenti di distrazione</p>
-
-  <div class="card">
-    <div class="card-title">Durante lo studio</div>
-    <div class="card-sub">71 studenti</div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Risponde a messaggi</span> <span>45</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 100%; background: #f97b6b;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Apre social senza volerlo</span> <span>34</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 76%; background: #f97b6b;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Guarda video non scolastici</span> <span>14</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 31%; background: #f97b6b;"></div></div>
-    </div>
-    <div class="bar-item">
-      <div class="bar-label"><span>Usa tecniche anti-distrazione</span> <span>17</span></div>
-      <div class="bar-container"><div class="bar-fill" style="width: 38%; background: #6ee7b7;"></div></div>
-    </div>
-  </div>
-
-  <!-- Utilità vs Distrazione -->
-  <p class="section-title">⚖️ Percezione: utilità vs distrazione</p>
-
-  <div class="card">
-    <div class="card-title">Quanto la tecnologia aiuta nello studio?</div>
-    <div class="card-sub">Scala 1-5 (media: 3.89)</div>
-    <div class="scale-item">
-      <div class="scale-num">1</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 5%; background: #6ee7b7;"></div></div>
-      <div class="scale-val">1</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">2</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 15%; background: #6ee7b7;"></div></div>
-      <div class="scale-val">3</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">3</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 60%; background: #6ee7b7;"></div></div>
-      <div class="scale-val">19</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">4</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 100%; background: #6ee7b7;"></div></div>
-      <div class="scale-val">28</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">5</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 65%; background: #6ee7b7;"></div></div>
-      <div class="scale-val">20</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Quanto smartphone/social distraggono?</div>
-    <div class="card-sub">Scala 1-5 (media: 3.42)</div>
-    <div class="scale-item">
-      <div class="scale-num">1</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 8%; background: #f97b6b;"></div></div>
-      <div class="scale-val">2</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">2</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 40%; background: #f97b6b;"></div></div>
-      <div class="scale-val">12</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">3</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 70%; background: #f97b6b;"></div></div>
-      <div class="scale-val">21</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">4</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 87%; background: #f97b6b;"></div></div>
-      <div class="scale-val">26</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-num">5</div>
-      <div class="scale-bar"><div class="scale-fill" style="width: 32%; background: #f97b6b;"></div></div>
-      <div class="scale-val">10</div>
-    </div>
-  </div>
-
-  <!-- Impatto -->
-  <p class="section-title">📈 Impatto su apprendimento</p>
-
+  <p class="section-title">Uso della tecnologia</p>
   <div class="grid-2">
     <div class="card">
-      <div class="card-title">Aiuto per argomenti difficili?</div>
-      <div class="card-sub">71 risposte</div>
-      <div style="font-size: 0.8rem; color: var(--text); line-height: 1.8;">
-        <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
-          <span style="color: #6ee7b7; font-weight: bold;">✓ Sì, spesso</span>: 39 (55%)
-        </div>
-        <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
-          <span style="color: #fbbf24; font-weight: bold;">~ A volte</span>: 28 (39%)
-        </div>
-        <div style="padding: 8px 0;">
-          <span style="color: #f97b6b; font-weight: bold;">✗ Raramente</span>: 4 (6%)
-        </div>
+      <div class="card-title">Dispositivi più usati per lo studio</div>
+      <div class="card-sub">Possibile selezione multipla · 71 studenti</div>
+      <div class="hbar-wrap" id="dispositivi"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">App e piattaforme per studiare</div>
+      <div class="card-sub">Possibile selezione multipla · ChatGPT domina</div>
+      <div class="hbar-wrap" id="app"></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Ore al giorno dedicate allo studio con tech</div>
+      <div class="card-sub">Distribuzione del tempo</div>
+      <div class="chart-wrap">
+        <canvas id="oreChart"></canvas>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">Concentrazione peggiorata?</div>
-      <div class="card-sub">71 risposte</div>
-      <div style="font-size: 0.8rem; color: var(--text); line-height: 1.8;">
-        <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
-          <span style="color: #fbbf24; font-weight: bold;">Un po'</span>: 35 (49%)
-        </div>
-        <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
-          <span style="color: #7c8499; font-weight: bold;">Nessun cambio</span>: 23 (32%)
-        </div>
-        <div style="padding: 8px 0;">
-          <span style="color: #f97b6b; font-weight: bold;">Sì, molto</span>: 13 (18%)
-        </div>
+      <div class="card-title">Comportamenti di distrazione durante lo studio</div>
+      <div class="card-sub">Possibile selezione multipla · n = 71</div>
+      <div class="hbar-wrap" id="distrazioni"></div>
+    </div>
+  </div>
+
+  <p class="section-title">Utilità vs distrazione — percezione degli studenti</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Quanto la tecnologia aiuta nello studio</div>
+      <div class="card-sub">Scala 1–5 · media = <strong style="color:var(--accent3)">3.89</strong></div>
+      <div class="scale-bar-wrap" id="aiutoScale"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Quanto smartphone/social distraggono</div>
+      <div class="card-sub">Scala 1–5 · media = <strong style="color:var(--accent2)">3.42</strong></div>
+      <div class="scale-bar-wrap" id="distrazioneScale"></div>
+    </div>
+  </div>
+
+  <p class="section-title">Impatto su apprendimento e concentrazione</p>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">La tecnologia ha aiutato per argomenti difficili?</div>
+      <div class="card-sub">n = 71 risposte</div>
+      <div class="chart-wrap">
+        <canvas id="difficiliChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">I docenti usano la tecnologia in modo utile?</div>
+      <div class="card-sub">Percezione degli studenti</div>
+      <div class="chart-wrap">
+        <canvas id="docentiChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">La tecnologia ha peggiorato la concentrazione?</div>
+      <div class="card-sub">Autopercezione degli studenti</div>
+      <div class="chart-wrap">
+        <canvas id="concentrazioneChart"></canvas>
       </div>
     </div>
   </div>
 
-  <!-- Insights -->
   <div class="insight">
     <div class="insight-title">⚡ Principali insight</div>
     <ul class="insight-list">
-      <li><strong>83%</strong> usa ChatGPT o altri AI — è la risorsa TOP</li>
-      <li>Tecnologia percepita come <strong>più utile che distrattiva</strong> (3.9 vs 3.4)</li>
-      <li><strong>63%</strong> studia >1 ora al giorno con la tecnologia</li>
-      <li>Distrazione MASSIMA: <strong>rispondere ai messaggi</strong> (63%)</li>
-      <li>Solo <strong>18%</strong> pensa che la tecnologia abbia peggiorato MOLTO la concentrazione</li>
-      <li>I docenti sono visti come <strong>poco efficaci</strong> (45% dice "poco o niente")</li>
+      <li>L'<strong>83% degli studenti</strong> usa ChatGPT o altri strumenti AI per studiare — è la risorsa più usata, superando Google (56%).</li>
+      <li>La tecnologia viene percepita come <strong>più utile che distrattiva</strong> (utilità media 3.9 vs distrazione 3.4 su scala 1–5).</li>
+      <li><strong>63% dei rispondenti usa >1 ora al giorno</strong> la tecnologia per lo studio; il 31% supera le 2 ore.</li>
+      <li>Il comportamento di distrazione più diffuso è <strong>rispondere ai messaggi</strong> (45 studenti, 63%) mentre studia.</li>
+      <li>Solo il <strong>13%</strong> pensa che la tecnologia abbia peggiorato molto la concentrazione; il 49% dice "un po'".</li>
+      <li>I docenti sono visti come <strong>poco efficaci</strong> nell'uso didattico della tecnologia: ben il 45% dice "poco" o "per niente".</li>
     </ul>
   </div>
 
-  <footer>
-    ✓ Analisi generata su 71 risposte · Maggio 2026
-  </footer>
+  <footer>Analisi generata su 71 risposte · Sondaggio maggio 2026</footer>
 
 </div>
+
+<script>
+// Configurazione base Chart.js
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#7c8499';
+
+const accent = ['#5b9cf6','#f97b6b','#6ee7b7','#fbbf24','#c084fc'];
+
+// ETA
+new Chart(document.getElementById('etaChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['17–19 anni', '14–16 anni', 'Più di 19'],
+    datasets: [{ data: [32, 20, 19], backgroundColor: accent, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: { legend: { position: 'right', labels: { boxWidth: 10, padding: 12 } } }
+  }
+});
+
+// CLASSE
+new Chart(document.getElementById('classeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Quinta', 'Università', 'Prima', 'Seconda', 'Terza'],
+    datasets: [{ data: [34, 17, 10, 9, 1], backgroundColor: [...accent, '#94a3b8'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: { legend: { position: 'right', labels: { boxWidth: 10, padding: 12 } } }
+  }
+});
+
+// ORE
+new Chart(document.getElementById('oreChart'), {
+  type: 'bar',
+  data: {
+    labels: ['< 30 min', '30 min – 1h', '1–2 ore', '> 2 ore'],
+    datasets: [{
+      label: 'Studenti',
+      data: [10, 24, 15, 22],
+      backgroundColor: ['#5b9cf6aa','#6ee7b7aa','#fbbf24aa','#f97b6baa'],
+      borderColor: ['#5b9cf6','#6ee7b7','#fbbf24','#f97b6b'],
+      borderWidth: 2,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#2a2f3d' } },
+      y: { grid: { color: '#2a2f3d' }, beginAtZero: true }
+    }
+  }
+});
+
+// DIFFICILI
+new Chart(document.getElementById('difficiliChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Sì, spesso', 'A volte', 'Raramente'],
+    datasets: [{ data: [39, 28, 4], backgroundColor: ['#6ee7b7','#fbbf24','#f97b6b'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } }
+  }
+});
+
+// DOCENTI
+new Chart(document.getElementById('docentiChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Abbastanza', 'Poco', 'Sì, molto', 'Per niente'],
+    datasets: [{ data: [30, 30, 9, 2], backgroundColor: ['#5b9cf6','#f97b6b','#6ee7b7','#c084fc'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } }
+  }
+});
+
+// CONCENTRAZIONE
+new Chart(document.getElementById('concentrazioneChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ["Un po'", 'Nessun cambiamento', 'Sì, molto', "L'ha migliorata"],
+    datasets: [{ data: [35, 23, 7, 6], backgroundColor: ['#fbbf24','#7c8499','#f97b6b','#6ee7b7'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } }
+  }
+});
+
+// Barre orizzontali
+function renderHbar(id, items, color) {
+  const max = Math.max(...items.map(i => i.v));
+  document.getElementById(id).innerHTML = items.map(i => `
+    <div class="hbar-row">
+      <div class="hbar-label">${i.l}</div>
+      <div class="hbar-track">
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${(i.v/max*100).toFixed(0)}%;background:${color}"></div></div>
+        <div class="hbar-val">${i.v}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderHbar('dispositivi', [
+  { l: 'Smartphone', v: 37 },
+  { l: 'Tablet', v: 35 },
+  { l: 'PC / Laptop', v: 33 },
+  { l: 'Smartboard', v: 2 }
+], '#5b9cf6');
+
+renderHbar('app', [
+  { l: 'ChatGPT', v: 59 },
+  { l: 'Google', v: 40 },
+  { l: 'Registro', v: 30 },
+  { l: 'Notion', v: 25 }
+], '#c084fc');
+
+renderHbar('distrazioni', [
+  { l: 'Messaggi', v: 45 },
+  { l: 'Social', v: 34 },
+  { l: 'Video', v: 14 }
+], '#f97b6b');
+
+// Scale
+function renderScale(id, dist, color) {
+  const max = Math.max(...Object.values(dist));
+  document.getElementById(id).innerHTML = Object.entries(dist).map(([k, v]) => `
+    <div class="scale-row">
+      <div class="scale-num">${k}</div>
+      <div class="scale-bar-bg"><div class="scale-bar-fill" style="width:${(v/max*100).toFixed(0)}%;background:${color}"></div></div>
+      <div class="scale-count">${v}</div>
+    </div>
+  `).join('');
+}
+
+renderScale('aiutoScale', { '1':1,'2':3,'3':19,'4':28,'5':20 }, '#6ee7b7');
+renderScale('distrazioneScale', { '1':2,'2':12,'3':21,'4':26,'5':10 }, '#f97b6b');
+</script>
+
 </body>
 </html>
